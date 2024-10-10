@@ -3,11 +3,8 @@ package com.example.teachmintapplication.domain.local
 import com.example.teachmintapplication.data.local.entity.ItemEntity
 
 
-interface ILocalRepo {
-
+interface ILocalRepository {
 
     suspend fun getAllRepositories() : List<ItemEntity>?
-
-
 
 }

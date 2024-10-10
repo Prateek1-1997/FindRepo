@@ -5,7 +5,8 @@ import com.google.gson.annotations.SerializedName
 
 
 data class RepositoryItem(
-    @SerializedName("name") val fullName: String,
+    @SerializedName("full_name") val fullName: String,
+    @SerializedName("name") val name: String,
     @SerializedName("owner") val owner: Owner
 )
 

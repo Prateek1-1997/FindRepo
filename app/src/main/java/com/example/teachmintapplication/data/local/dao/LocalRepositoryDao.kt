@@ -1,12 +1,11 @@
-package com.abhisek.project.bookshelf.data.local.dao
-
+package com.example.teachmintapplication.data.local.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import com.example.teachmintapplication.data.local.entity.ItemEntity
 
 @Dao
-interface LocalRepoDao {
+interface LocalRepositoryDao {
 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

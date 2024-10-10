@@ -77,13 +77,12 @@ fun AppNavHost() {
 
                 )
 
-                uiState.repositoryItemList?.let { repoList ->
+                uiState.repositoryItemList?.let { repositoryItemList ->
 
                     LazyColumn {
-
-                        val lastIndex = repoList.lastIndex
+                        val lastIndex = repositoryItemList.lastIndex
                         itemsIndexed(
-                            items = repoList,
+                            items = repositoryItemList,
                         ) { lazyItemScope, repo ->
                             RepoCard(repo) {
                                 navHostController.navigate(Screen.RepoDetailsScreen(it))
@@ -96,11 +95,7 @@ fun AppNavHost() {
                         }
 
                     }
-
-
                 }
-
-
             }
         }
 
@@ -113,9 +108,9 @@ fun AppNavHost() {
 
             }
 
-            val repoUiState by viewModel.repoDetailsState.collectAsStateWithLifecycle()
+            val repoUiState by viewModel.repositoryDetailsState.collectAsStateWithLifecycle()
 
-            repoUiState.repository?.let { repo ->
+            repoUiState.repository?.let { repository ->
 
                 Box(
                     modifier = Modifier
@@ -132,7 +127,7 @@ fun AppNavHost() {
                             .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
                             .background(MaterialTheme.colorScheme.surface)
                             .clickable {
-                                repo.htmlUrl.let { url ->
+                                repository.htmlUrl.let { url ->
                                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                                     context.startActivity(intent)
                                 }
@@ -150,7 +145,7 @@ fun AppNavHost() {
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 AsyncImage(
-                                    model = repo.owner.avatarUrl,
+                                    model = repository.owner.avatarUrl,
                                     contentDescription = null,
                                     modifier = Modifier
                                         .size(80.dp)
@@ -167,7 +162,7 @@ fun AppNavHost() {
                                         color = MaterialTheme.colorScheme.onSurface
                                     )
                                     Text(
-                                        text = repo.fullName.orEmpty(),
+                                        text = repository.fullName.orEmpty(),
                                         style = MaterialTheme.typography.bodyLarge,
                                         color = MaterialTheme.colorScheme.primary
                                     )
@@ -180,7 +175,7 @@ fun AppNavHost() {
                                         color = MaterialTheme.colorScheme.onSurface
                                     )
                                     Text(
-                                        text = repo.description ?: "No description available",
+                                        text = repository.description ?: "No description available",
                                         style = MaterialTheme.typography.labelLarge,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -194,7 +189,7 @@ fun AppNavHost() {
                                         color = MaterialTheme.colorScheme.onSurface
                                     )
                                     Text(
-                                        text = repo.htmlUrl ?: "No URL available",
+                                        text = repository.htmlUrl ?: "No URL available",
                                         style = MaterialTheme.typography.bodyMedium,
                                         color = MaterialTheme.colorScheme.primary
                                     )
@@ -204,7 +199,7 @@ fun AppNavHost() {
                             Spacer(modifier = Modifier.height(16.dp))
 
                             val topContributors =
-                                repo.contributors?.take(2)?.joinToString(", ") { it.login }
+                                repository.contributors?.take(2)?.joinToString(", ") { it.login }
 
                             if (!topContributors.isNullOrEmpty()) {
                                 Text(
@@ -245,7 +240,7 @@ fun RepoCard(repo : RepositoryItem, onCardClick: (String)->Unit) {
 
            )
 
-           Text(style = TextStyle.Default, text = repo.fullName)
+           Text(style = TextStyle.Default, text = repo.name)
 
 
        }

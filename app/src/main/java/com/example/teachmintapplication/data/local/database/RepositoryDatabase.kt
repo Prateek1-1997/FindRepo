@@ -1,10 +1,9 @@
-package com.abhisek.project.bookshelf.data.local.database
-
+package com.example.teachmintapplication.data.local.database
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.abhisek.project.bookshelf.data.local.dao.LocalRepoDao
+import com.example.teachmintapplication.data.local.dao.LocalRepositoryDao
 import com.example.teachmintapplication.data.local.entity.ItemEntity
 import javax.inject.Singleton
 
@@ -16,7 +15,7 @@ import javax.inject.Singleton
 )
 abstract class RepositoryDatabase : RoomDatabase() {
 
-    abstract val repositoryDao: LocalRepoDao
+    abstract val repositoryDao: LocalRepositoryDao
 
     companion object {
         @Volatile

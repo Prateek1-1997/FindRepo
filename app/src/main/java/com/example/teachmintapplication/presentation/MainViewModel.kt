@@ -36,8 +36,8 @@ class MainViewModel @Inject constructor(private val iRepository: IRepository, pr
     val uiState: StateFlow<State> = _uiState.asStateFlow()
 
 
-    private val _repoDetailsState = MutableStateFlow(RepoDetailsState(repository = null))
-    val repoDetailsState: StateFlow<RepoDetailsState> = _repoDetailsState.asStateFlow()
+    private val _repositoryDetailsState = MutableStateFlow(RepositoryDetailsState(repository = null))
+    val repositoryDetailsState: StateFlow<RepositoryDetailsState> = _repositoryDetailsState.asStateFlow()
 
     private var pageCount=1
     private var query:String =""
@@ -46,10 +46,10 @@ class MainViewModel @Inject constructor(private val iRepository: IRepository, pr
 
   fun searchRepositories(query: String){
       job?.cancel()
-     job= viewModelScope.launch (coroutineExceptionHandler){
+      job= viewModelScope.launch (coroutineExceptionHandler){
           this@MainViewModel.query=query
           delay(debounceTimeMillis)
-         pageCount=1
+          pageCount=1
           val repoData = fetchRepositoryUsecase.invoke(query,pageCount)
           _uiState.update { currentState->
               currentState.copy(
@@ -61,9 +61,9 @@ class MainViewModel @Inject constructor(private val iRepository: IRepository, pr
   }
 
     fun getMoreRepositories() {
-        viewModelScope.launch (coroutineExceptionHandler){
+            viewModelScope.launch (coroutineExceptionHandler){
             pageCount++
-            val repositoryItems = iRepository.getRepoList(query,pageCount)
+            val repositoryItems = iRepository.getRepositoriesList(query,pageCount)
             _uiState.update { currentState ->
                 currentState.copy(
                     repositoryItemList = getUpdatedList(_uiState.value.repositoryItemList,repositoryItems)
@@ -75,9 +75,9 @@ class MainViewModel @Inject constructor(private val iRepository: IRepository, pr
 
 
     fun getRepositoryDetails(repoName:String) {
-        viewModelScope.launch (coroutineExceptionHandler){
-            val repoData = iRepository.getRepoDetails(repoName)
-            _repoDetailsState.update { currentState ->
+            viewModelScope.launch (coroutineExceptionHandler){
+            val repoData = iRepository.getRepositoryDetails(repoName)
+            _repositoryDetailsState.update { currentState ->
                 currentState.copy(
                     repository = repoData
                 )
@@ -98,12 +98,11 @@ class MainViewModel @Inject constructor(private val iRepository: IRepository, pr
 
 
 
-
     data class State(
         val repositoryItemList: List<RepositoryItem>?,
  )
 
-    data class RepoDetailsState(
+    data class RepositoryDetailsState(
         val repository: RepositoryDetailDto?,
     )
 

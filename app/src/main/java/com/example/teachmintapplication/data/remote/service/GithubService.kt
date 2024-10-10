@@ -11,11 +11,11 @@ import retrofit2.http.Query
 interface GithubService {
 
     @GET("search/repositories")
-    suspend fun getRepoList(@Query ("q") query: String, @Query("per_page") perPage : Int =15,@Query ("page") page:Int) : Response<RepositoriesListDto>
+    suspend fun getRepositoriesList(@Query ("q") query: String, @Query("per_page") perPage : Int =15, @Query ("page") page:Int) : Response<RepositoriesListDto>
 
     @GET("repos/{repo_name}")
-    suspend fun getRepoDetails(@Path("repo_name",encoded = true) repoName: String ): Response<RepositoryDetailDto>
+    suspend fun getRepositoryDetails(@Path("repo_name",encoded = true) repoName: String ): Response<RepositoryDetailDto>
 
     @GET("repos/{repo_name}/contributors")
-    suspend fun getRepoContributors(@Path("repo_name",encoded = true) repoName: String ): Response<ContributorsListDto>
+    suspend fun getRepositoryContributors(@Path("repo_name",encoded = true) repoName: String ): Response<ContributorsListDto>
 }

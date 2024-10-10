@@ -5,7 +5,7 @@ import com.example.teachmintapplication.domain.models.RepositoryDetailDto
 
 interface IRepository {
 
-    suspend fun getRepoList(query: String,page:Int) : List<RepositoryItem>?
+    suspend fun getRepositoriesList(query: String, page:Int) : List<RepositoryItem>?
 
-    suspend fun getRepoDetails(repoName:String) : RepositoryDetailDto?
+    suspend fun getRepositoryDetails(repoName:String) : RepositoryDetailDto?
 }

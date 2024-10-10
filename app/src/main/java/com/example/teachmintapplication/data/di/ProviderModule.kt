@@ -1,13 +1,12 @@
 package com.example.teachmintapplication.data.di
-
 import android.content.Context
-import com.abhisek.project.bookshelf.data.local.dao.LocalRepoDao
-import com.abhisek.project.bookshelf.data.local.database.RepositoryDatabase
-import com.abhisek.project.bookshelf.data.local.repository.LocalRepoImpl
+import com.example.teachmintapplication.data.local.dao.LocalRepositoryDao
+import com.example.teachmintapplication.data.local.database.RepositoryDatabase
+import com.example.teachmintapplication.data.local.repository.LocalRepositoryImpl
 import com.example.teachmintapplication.data.remote.service.GithubService
 import com.example.teachmintapplication.data.remote.NetworkManager
-import com.example.teachmintapplication.data.repository.RepoImpl
-import com.example.teachmintapplication.domain.local.ILocalRepo
+import com.example.teachmintapplication.data.repository.RepositoryImpl
+import com.example.teachmintapplication.domain.local.ILocalRepository
 import com.example.teachmintapplication.domain.remote.IRepository
 import dagger.Module
 import dagger.Provides
@@ -24,15 +23,15 @@ object ProviderModule {
 
     @Provides
     @Singleton
-    fun provideLocalRepo(
-        repositoryDao: LocalRepoDao
-    ): ILocalRepo {
-        return LocalRepoImpl (repositoryDao)
+    fun provideLocalRepository(
+        repositoryDao: LocalRepositoryDao
+    ): ILocalRepository {
+        return LocalRepositoryImpl (repositoryDao)
     }
 
     @Provides
     @Singleton
-    fun provideDao(repositoryDatabase : RepositoryDatabase): LocalRepoDao {
+    fun provideDao(repositoryDatabase : RepositoryDatabase): LocalRepositoryDao {
         return repositoryDatabase.repositoryDao
     }
 
@@ -57,7 +56,7 @@ object ProviderModule {
 
     @Provides
     @Singleton
-    fun provideRepository(repoImpl: RepoImpl) : IRepository {
+    fun provideRepository(repoImpl: RepositoryImpl) : IRepository {
         return repoImpl
     }
 
