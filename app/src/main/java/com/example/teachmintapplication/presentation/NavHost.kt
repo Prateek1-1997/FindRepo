@@ -46,7 +46,7 @@ import com.example.teachmintapplication.domain.models.RepositoryItem
 import kotlinx.serialization.Serializable
 
 @Composable
-fun MyNavHost() {
+fun AppNavHost() {
     val navHostController = rememberNavController()
 
     NavHost(
