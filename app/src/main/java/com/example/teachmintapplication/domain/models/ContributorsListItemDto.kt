@@ -1,7 +1,7 @@
-package com.example.teachmintapplication.domain
+package com.example.teachmintapplication.domain.models
 
 import com.google.gson.annotations.SerializedName
 
-data class ContributorsListDtoItem(
+data class ContributorsListItemDto(
     @SerializedName("login") val login: String
 )

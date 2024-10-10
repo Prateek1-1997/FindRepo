@@ -1,11 +1,14 @@
-package com.example.teachmintapplication.data
+package com.example.teachmintapplication.data.di
 
 import android.content.Context
 import com.abhisek.project.bookshelf.data.local.dao.LocalRepoDao
 import com.abhisek.project.bookshelf.data.local.database.RepositoryDatabase
 import com.abhisek.project.bookshelf.data.local.repository.LocalRepoImpl
-import com.example.teachmintapplication.domain.ILocalRepo
-import com.example.teachmintapplication.domain.IRepository
+import com.example.teachmintapplication.data.remote.service.GithubService
+import com.example.teachmintapplication.data.remote.NetworkManager
+import com.example.teachmintapplication.data.repository.RepoImpl
+import com.example.teachmintapplication.domain.local.ILocalRepo
+import com.example.teachmintapplication.domain.remote.IRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -48,13 +51,13 @@ object ProviderModule {
 
     @Provides
     @Singleton
-    fun provideService(retrofit: Retrofit): GithubService{
+    fun provideService(retrofit: Retrofit): GithubService {
         return retrofit.create(GithubService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideRepository(repoImpl: RepoImpl) : IRepository{
+    fun provideRepository(repoImpl: RepoImpl) : IRepository {
         return repoImpl
     }
 

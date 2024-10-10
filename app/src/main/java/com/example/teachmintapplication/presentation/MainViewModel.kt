@@ -5,10 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.teachmintapplication.domain.FetchRepositoryUsecase
-import com.example.teachmintapplication.domain.IRepository
-import com.example.teachmintapplication.domain.Item
-import com.example.teachmintapplication.domain.RepoDetailDto
+import com.example.teachmintapplication.domain.usecase.FetchRepositoryUsecase
+import com.example.teachmintapplication.domain.remote.IRepository
+import com.example.teachmintapplication.domain.models.RepositoryItem
+import com.example.teachmintapplication.domain.models.RepositoryDetailDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
@@ -21,52 +21,52 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MyViewModel @Inject constructor(val iRepository: IRepository, val fetchRepositoryUsecase: FetchRepositoryUsecase):ViewModel() {
+class MainViewModel @Inject constructor(private val iRepository: IRepository, private val fetchRepositoryUsecase: FetchRepositoryUsecase):ViewModel() {
 
 
-    var job by mutableStateOf<Job?>(null)
+    private var job by mutableStateOf<Job?>(null)
     private val debounceTimeMillis = 1000L
 
-    val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         throwable.printStackTrace()
     }
 
 
-  private val _uiState = MutableStateFlow(State(repoList = null))
+  private val _uiState = MutableStateFlow(State(repositoryItemList = null))
     val uiState: StateFlow<State> = _uiState.asStateFlow()
 
 
-    private val _repoDetailsState = MutableStateFlow(RepoDetailsState(repo = null))
+    private val _repoDetailsState = MutableStateFlow(RepoDetailsState(repository = null))
     val repoDetailsState: StateFlow<RepoDetailsState> = _repoDetailsState.asStateFlow()
 
-    var pageCount=1
-    var query:String =""
+    private var pageCount=1
+    private var query:String =""
 
 
 
-  fun searchRepo(query: String){
+  fun searchRepositories(query: String){
       job?.cancel()
      job= viewModelScope.launch (coroutineExceptionHandler){
-          this@MyViewModel.query=query
+          this@MainViewModel.query=query
           delay(debounceTimeMillis)
          pageCount=1
           val repoData = fetchRepositoryUsecase.invoke(query,pageCount)
           _uiState.update { currentState->
               currentState.copy(
-                  repoList = repoData,
+                  repositoryItemList = repoData,
               )
           }
 
       }
   }
 
-    fun getMoreRepo() {
+    fun getMoreRepositories() {
         viewModelScope.launch (coroutineExceptionHandler){
             pageCount++
-            val newData = iRepository.getRepoList(query,pageCount)
+            val repositoryItems = iRepository.getRepoList(query,pageCount)
             _uiState.update { currentState ->
                 currentState.copy(
-                    repoList = getUpdatedList(_uiState.value.repoList,newData)
+                    repositoryItemList = getUpdatedList(_uiState.value.repositoryItemList,repositoryItems)
                 )
             }
 
@@ -74,24 +74,24 @@ class MyViewModel @Inject constructor(val iRepository: IRepository, val fetchRep
     }
 
 
-    fun getRepoDetails(repoName:String) {
+    fun getRepositoryDetails(repoName:String) {
         viewModelScope.launch (coroutineExceptionHandler){
             val repoData = iRepository.getRepoDetails(repoName)
             _repoDetailsState.update { currentState ->
                 currentState.copy(
-                    repo = repoData
+                    repository = repoData
                 )
             }
 
         }
     }
 
-    private fun getUpdatedList(repoList: List<Item>?, newData: List<Item>?): List<Item>? {
+    private fun getUpdatedList(repositoryItemList: List<RepositoryItem>?, repositoryItems: List<RepositoryItem>?): List<RepositoryItem>? {
         return when {
-            repoList == null && newData == null -> null
-            repoList == null -> newData
-            newData == null -> repoList
-            else -> repoList + newData
+            repositoryItemList == null && repositoryItems == null -> null
+            repositoryItemList == null -> repositoryItems
+            repositoryItems == null -> repositoryItemList
+            else -> repositoryItemList + repositoryItems
         }
     }
 
@@ -100,11 +100,11 @@ class MyViewModel @Inject constructor(val iRepository: IRepository, val fetchRep
 
 
     data class State(
-     val repoList: List<Item>?,
+        val repositoryItemList: List<RepositoryItem>?,
  )
 
     data class RepoDetailsState(
-        val repo: RepoDetailDto?,
+        val repository: RepositoryDetailDto?,
     )
 
 }

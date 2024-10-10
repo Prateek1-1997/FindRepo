@@ -1,4 +1,4 @@
-package com.example.teachmintapplication.data
+package com.example.teachmintapplication.data.remote
 
 import android.content.Context
 import android.net.ConnectivityManager

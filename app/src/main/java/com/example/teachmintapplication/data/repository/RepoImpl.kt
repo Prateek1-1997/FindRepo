@@ -1,17 +1,19 @@
-package com.example.teachmintapplication.data
+package com.example.teachmintapplication.data.repository
 
 import com.abhisek.project.bookshelf.data.local.dao.LocalRepoDao
 import com.example.teachmintapplication.data.local.entity.ItemEntity
-import com.example.teachmintapplication.domain.IRepository
-import com.example.teachmintapplication.domain.Item
-import com.example.teachmintapplication.domain.RepoDetailDto
+import com.example.teachmintapplication.data.remote.service.GithubService
+import com.example.teachmintapplication.domain.remote.IRepository
+import com.example.teachmintapplication.domain.models.RepositoryItem
+import com.example.teachmintapplication.domain.models.RepositoryDetailDto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class RepoImpl @Inject constructor(private val githubService: GithubService,private val repositoriesDao:LocalRepoDao) : IRepository{
-    override suspend fun getRepoList(query: String,page:Int): List<Item>? {
+class RepoImpl @Inject constructor(private val githubService: GithubService, private val repositoriesDao:LocalRepoDao) :
+    IRepository {
+    override suspend fun getRepoList(query: String,page:Int): List<RepositoryItem>? {
         return withContext(Dispatchers.IO){
             val response = githubService.getRepoList(query, page = page)
             if(response.isSuccessful){
@@ -23,7 +25,7 @@ class RepoImpl @Inject constructor(private val githubService: GithubService,priv
         }
     }
 
-    override suspend fun getRepoDetails(repoName:String): RepoDetailDto? {
+    override suspend fun getRepoDetails(repoName:String): RepositoryDetailDto? {
         return withContext(Dispatchers.IO){
             val response1 = async {  githubService.getRepoDetails(repoName)}
             val response2 = async {  githubService.getRepoContributors(repoName)}

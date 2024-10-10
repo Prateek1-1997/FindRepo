@@ -2,7 +2,6 @@ package com.example.teachmintapplication.presentation
 
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -18,7 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -27,7 +25,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,19 +37,16 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import coil3.compose.AsyncImage
-import com.example.teachmintapplication.domain.Item
+import com.example.teachmintapplication.domain.models.RepositoryItem
 import kotlinx.serialization.Serializable
 
 @Composable
 fun MyNavHost() {
-
-
     val navHostController = rememberNavController()
 
     NavHost(
@@ -60,7 +54,7 @@ fun MyNavHost() {
         startDestination = Screen.HomeScreen
     ) {
         composable<Screen.HomeScreen> {
-            val viewModel = hiltViewModel<MyViewModel>()
+            val viewModel = hiltViewModel<MainViewModel>()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             val query = remember { mutableStateOf("") }
 
@@ -74,7 +68,7 @@ fun MyNavHost() {
                     value = query.value,
                     onValueChange = {
                         query.value = it
-                        viewModel.searchRepo(it)
+                        viewModel.searchRepositories(it)
                     },
                     maxLines = 1,
                     label = {
@@ -83,7 +77,7 @@ fun MyNavHost() {
 
                 )
 
-                uiState.repoList?.let { repoList ->
+                uiState.repositoryItemList?.let { repoList ->
 
                     LazyColumn {
 
@@ -96,7 +90,7 @@ fun MyNavHost() {
                             }
                             if ((lastIndex == lazyItemScope) && (lastIndex != 0)) {
                                 LaunchedEffect(Unit) {
-                                    viewModel.getMoreRepo()
+                                    viewModel.getMoreRepositories()
                                 }
                             }
                         }
@@ -112,16 +106,16 @@ fun MyNavHost() {
 
         composable<Screen.RepoDetailsScreen> { backStackEntry ->
             val profile: Screen.RepoDetailsScreen = backStackEntry.toRoute()
-            val viewModel = hiltViewModel<MyViewModel>()
+            val viewModel = hiltViewModel<MainViewModel>()
             val context = LocalContext.current
             LaunchedEffect(key1 = profile.key) {
-                viewModel.getRepoDetails(profile.key)
+                viewModel.getRepositoryDetails(profile.key)
 
             }
 
             val repoUiState by viewModel.repoDetailsState.collectAsStateWithLifecycle()
 
-            repoUiState.repo?.let { repo ->
+            repoUiState.repository?.let { repo ->
 
                 Box(
                     modifier = Modifier
@@ -232,14 +226,8 @@ fun MyNavHost() {
     }
 }
 
-
-
-
-
-
-
 @Composable
-fun RepoCard(repo : Item,onCardClick: (String)->Unit) {
+fun RepoCard(repo : RepositoryItem, onCardClick: (String)->Unit) {
    Card(
       modifier = Modifier.fillMaxWidth()
           .padding(16.dp)
@@ -257,14 +245,10 @@ fun RepoCard(repo : Item,onCardClick: (String)->Unit) {
 
            )
 
-
-
            Text(style = TextStyle.Default, text = repo.fullName)
 
 
        }
-
-
 
    }
 }
