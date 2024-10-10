@@ -42,6 +42,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import coil3.compose.AsyncImage
+import com.example.teachmintapplication.RepositoryDataLabels
 import com.example.teachmintapplication.domain.models.RepositoryItem
 import kotlinx.serialization.Serializable
 
@@ -84,8 +85,8 @@ fun AppNavHost() {
                         itemsIndexed(
                             items = repositoryItemList,
                         ) { lazyItemScope, repo ->
-                            RepoCard(repo) {
-                                navHostController.navigate(Screen.RepoDetailsScreen(it))
+                            RepositoryCard(repo) {
+                                navHostController.navigate(Screen.RepositoryDetailsScreen(it))
                             }
                             if ((lastIndex == lazyItemScope) && (lastIndex != 0)) {
                                 LaunchedEffect(Unit) {
@@ -99,8 +100,8 @@ fun AppNavHost() {
             }
         }
 
-        composable<Screen.RepoDetailsScreen> { backStackEntry ->
-            val profile: Screen.RepoDetailsScreen = backStackEntry.toRoute()
+        composable<Screen.RepositoryDetailsScreen> { backStackEntry ->
+            val profile: Screen.RepositoryDetailsScreen = backStackEntry.toRoute()
             val viewModel = hiltViewModel<MainViewModel>()
             val context = LocalContext.current
             LaunchedEffect(key1 = profile.key) {
@@ -108,9 +109,9 @@ fun AppNavHost() {
 
             }
 
-            val repoUiState by viewModel.repositoryDetailsState.collectAsStateWithLifecycle()
+            val repositoryUiState by viewModel.repositoryDetailsState.collectAsStateWithLifecycle()
 
-            repoUiState.repository?.let { repository ->
+            repositoryUiState.repository?.let { repository ->
 
                 Box(
                     modifier = Modifier
@@ -157,7 +158,7 @@ fun AppNavHost() {
                                     modifier = Modifier.weight(1f)
                                 ) {
                                     Text(
-                                        text = "Repository Name",
+                                        text = RepositoryDataLabels.REPOSITORY_NAME,
                                         style = MaterialTheme.typography.labelLarge,
                                         color = MaterialTheme.colorScheme.onSurface
                                     )
@@ -170,12 +171,12 @@ fun AppNavHost() {
                                     Spacer(modifier = Modifier.height(8.dp))
 
                                     Text(
-                                        text = "Description",
+                                        text = RepositoryDataLabels.DESCRIPTION,
                                         style = MaterialTheme.typography.labelLarge,
                                         color = MaterialTheme.colorScheme.onSurface
                                     )
                                     Text(
-                                        text = repository.description ?: "No description available",
+                                        text = repository.description ?: RepositoryDataLabels.NO_DESCRIPTION,
                                         style = MaterialTheme.typography.labelLarge,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -184,12 +185,12 @@ fun AppNavHost() {
 
 
                                     Text(
-                                        text = "Repository URL",
+                                        text = RepositoryDataLabels.REPOSITORY_URL,
                                         style = MaterialTheme.typography.labelLarge,
                                         color = MaterialTheme.colorScheme.onSurface
                                     )
                                     Text(
-                                        text = repository.htmlUrl ?: "No URL available",
+                                        text = repository.htmlUrl ?: RepositoryDataLabels.NO_URL,
                                         style = MaterialTheme.typography.bodyMedium,
                                         color = MaterialTheme.colorScheme.primary
                                     )
@@ -205,7 +206,7 @@ fun AppNavHost() {
                                 Text(
                                     text = "Top Contributors: $topContributors",
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.secondary // Secondary color for contributors
+                                    color = MaterialTheme.colorScheme.secondary
                                 )
                             }
 
@@ -222,25 +223,25 @@ fun AppNavHost() {
 }
 
 @Composable
-fun RepoCard(repo : RepositoryItem, onCardClick: (String)->Unit) {
+fun RepositoryCard(repository : RepositoryItem, onCardClick: (String)->Unit) {
    Card(
       modifier = Modifier.fillMaxWidth()
           .padding(16.dp)
-          .wrapContentHeight().clickable {onCardClick(repo.fullName)},
+          .wrapContentHeight().clickable {onCardClick(repository.fullName)},
        shape = RoundedCornerShape(8.dp)
    ) {
 
        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically){
 
            AsyncImage(
-               model = repo.owner.avatarUrl,
+               model = repository.owner.avatarUrl,
                contentDescription = null,
                modifier = Modifier.size(64.dp).padding(end = 16.dp),
                contentScale = ContentScale.Crop
 
            )
 
-           Text(style = TextStyle.Default, text = repo.name)
+           Text(style = TextStyle.Default, text = repository.name)
 
 
        }
@@ -254,5 +255,5 @@ sealed class Screen{
     data object HomeScreen: Screen()
 
     @Serializable
-    data class RepoDetailsScreen(val key:String) : Screen()
+    data class RepositoryDetailsScreen(val key:String) : Screen()
 }
